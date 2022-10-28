@@ -1,11 +1,18 @@
-FROM registry.access.redhat.com/ubi8/nodejs-10
+FROM node:14-alpine3.15
 
-WORKDIR /opt/app-root
+WORKDIR /usr/src/app
+
+RUN apk update && apk add --no-cache python2 g++ make 
+
+# Install node dependencies - done in a separate step so Docker can cache it
 COPY package*.json ./
 RUN npm install
 
+# Copy project files into the image
 COPY . .
 
+# Expose port 8080, which is what the node process is listening to
 EXPOSE 8080
 
-CMD [ "npm", "start" ]
+# Set the startup command to 'npm start'
+CMD [ "npm", "start"] 
